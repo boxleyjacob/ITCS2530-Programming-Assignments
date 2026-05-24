@@ -10,7 +10,11 @@ My long-term goal is to develop a program capable of differentiating players bas
 ITCS2530-Programming-Assignments/
 
 ├── Week01/
+
 ├── Week02/
+
 ├── Week03/
+
 │   ...
+
 └── README.md

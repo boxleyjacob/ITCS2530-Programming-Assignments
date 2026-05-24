@@ -1,4 +1,5 @@
 About This Repository
+
 This repository serves as the central hub for all programming assignments completed in ITCS 2530. Each project demonstrates core C++ concepts including variables, control flow, functions, arrays, and object-oriented programming, developed throughout the course.
 
 About Me

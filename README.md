@@ -8,6 +8,7 @@ I am particularly interested in advanced metrics that go beyond traditional box 
 My long-term goal is to develop a program capable of differentiating players based on these advanced analytics, compiling a comprehensive performance spectrum that ranks players from elite to below average across multiple dimensions. This intersection of data analysis and basketball is what drives my interest in programming and motivates me to build real, meaningful software.
 
 ITCS2530-Programming-Assignments/
+
 ├── Week01/
 ├── Week02/
 ├── Week03/

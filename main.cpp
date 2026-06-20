@@ -14,7 +14,7 @@
 #include <fstream>
 #include <limits>
 #define NOMINMAX
-#include <windows.h>
+
 using namespace std;using namespace std;
 
 // ============================================================

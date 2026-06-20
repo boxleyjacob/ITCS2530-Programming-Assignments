@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="ITCS2530/ITCS2530.vcxproj" Id="a65b04a7-9206-454e-86f3-149ac5efd6cc" />
+</Solution>

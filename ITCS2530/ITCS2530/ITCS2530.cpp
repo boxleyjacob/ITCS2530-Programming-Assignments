@@ -17,7 +17,7 @@
 #include <fstream>
 #include <limits>
 
-//Pa6 fixed using namespace std twice error
+//PA6 fixed using namespace std twice error
 using namespace std;
 
 // ============================================================
@@ -264,6 +264,7 @@ void displayReport(const string& playerName, int gamesPlayed,
 // NEW Week 05: saveReport
 // Purpose: Write all stored sessions to report.txt.
 // ============================================================
+//Pa6 Mach Arrays as parameters.
 void saveReport(const string storedName[], const int storedGames[],
     const double storedPts100[], const double storedTS[],
     const double storedOnOff[], const string storedRole[],
@@ -316,6 +317,8 @@ int main()
     const int    MENU_EXIT = 4;
 
     // Session storage arrays (carried from Week 04)
+    //PA6 Mach - All Arrays recieve mulitipule input however stored minutes is not used yet.
+    //I may need to ask Jacob what he intended to do with this.
     string storedName[MAX_SESSIONS];
     int    storedGames[MAX_SESSIONS];
     double storedPts100[MAX_SESSIONS];
@@ -372,7 +375,7 @@ int main()
             cout << "[ Mode: Add Player Session ]" << endl;
             setColor(COLOR_DEFAULT);
             cout << endl;
-
+            //PA6 Mach - This is array size validation.
             if (sessionCount >= MAX_SESSIONS)
             {
                 setColor(COLOR_BAD);
@@ -423,20 +426,43 @@ int main()
                     impactLabel = "Role Player";
 
                 // if/else Block 3: Experience assessment (carried from Week 03/04)
-                string experienceLabel = "";
+                //PA6 Mach Refactoring Block 3 with an enum for assignment.
+                //PA6 ENUM addition
+                enum ExperienceLevel
+                {
+                    VETERAN_CONTRIBUTOR,
+                    VETERAN_NEEDS_ROLE_ADJUSTMENT,
+                    STILL_BUILDING_EXPERIENCE
+                };
+
+                //PA65 Mach String replacement
+                ExperienceLevel experienceLabel;
+                //PA6 Mach since I wrote the enum prior to functions being added the enum screwed up passed
+                //values using this to fix it.
+                string experienceText;
+
+                //PA6 MAch Updated if statement for enum
                 if (gamesPlayed >= VETERAN_GAMES && onOffDifferential > 0)
-                    experienceLabel = "Veteran Contributor";
+                    experienceLabel = VETERAN_CONTRIBUTOR;
                 else if (gamesPlayed >= VETERAN_GAMES && onOffDifferential <= 0)
-                    experienceLabel = "Veteran - Needs Role Adjustment";
+                    experienceLabel = VETERAN_NEEDS_ROLE_ADJUSTMENT;
                 else
-                    experienceLabel = "Still Building Experience";
+                    experienceLabel = STILL_BUILDING_EXPERIENCE;
+
+                //PA6 Mach continuing to fix value passing for functions
+                if (experienceLabel == VETERAN_CONTRIBUTOR)
+                    experienceText = "Veteran Contributor";
+                else if (experienceLabel == VETERAN_NEEDS_ROLE_ADJUSTMENT)
+                    experienceText = "Veteran - Needs Role Adjustment";
+                else
+                    experienceText = "Still Building Experience";
 
                 // NEW Week 05: call displayReport function instead of inline output
                 displayReport(playerName, gamesPlayed, minutesPlayed,
                     avgMinutesPerGame, pointsPer100, trueShootingPct,
                     onCourtRating, offCourtRating,
                     onOffDifferential, scoringContribution,
-                    roleLabel, impactLabel, experienceLabel);
+                    roleLabel, impactLabel, experienceText);
 
                 // Store session (carried from Week 04)
                 storedName[sessionCount] = playerName;
@@ -447,7 +473,7 @@ int main()
                 storedOnOff[sessionCount] = onOffDifferential;
                 storedRole[sessionCount] = roleLabel;
                 storedImpact[sessionCount] = impactLabel;
-                storedExperience[sessionCount] = experienceLabel;
+                storedExperience[sessionCount] = experienceText;
                 sessionCount++;
 
                 setColor(COLOR_GOOD);
@@ -494,6 +520,7 @@ int main()
             setColor(COLOR_DEFAULT);
             cout << string(80, '-') << endl;
 
+            //PA6 Mach use of arrays in summary report
             for (int i = 0; i < sessionCount; i++)
             {
                 cout << fixed << setprecision(1) << left
@@ -509,7 +536,7 @@ int main()
             cout << string(80, '-') << endl;
             cout << endl;
 
-            // NEW Week 05: call saveReport function instead of inline file writing
+            //NEW Week 05: call saveReport function instead of inline file writing
             saveReport(storedName, storedGames, storedPts100, storedTS,
                 storedOnOff, storedRole, sessionCount);
 

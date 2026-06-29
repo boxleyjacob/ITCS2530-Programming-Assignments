@@ -8,14 +8,14 @@
 //   - Console color: Windows SetConsoleTextAttribute
 // ============================================================
 
-//PA6 Fixed lack of windows.h bug
-#define NOMINMAX
-#include <windows.h>
 #include <iostream>
 #include <string>
 #include <iomanip>
 #include <fstream>
 #include <limits>
+#define NOMINMAX
+#include <windows.h>
+using namespace std;using namespace std;
 
 //PA6 fixed using namespace std twice error
 using namespace std;
@@ -40,7 +40,7 @@ void setColor(int color)
 }
 
 // ============================================================
-// NEW Week 05: displayBanner 
+// NEW Week 05: displayBanner
 // Purpose: Print the welcome banner (moved out of main).
 // ============================================================
 void displayBanner()
@@ -78,27 +78,20 @@ void displayMenu()
 // NEW Week 05: getValidInt
 // Purpose: Prompt for an int and loop until valid input >= min.
 // ============================================================
-
-//PA6 Fixed issue with excess remaining in buffer.
 int getValidInt(const string& prompt, int minVal)
 {
     int value;
-
     cout << prompt;
-
-    while (!(cin >> value) ||
-        value < minVal ||
-        cin.peek() != '\n')
+    cin >> value;
+    while (cin.fail() || value < minVal)
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         setColor(COLOR_BAD);
-        cout << "  [!] Invalid input. Enter a value >= "
-            << minVal << ": ";
+        cout << "  [!] Invalid input. Enter a value >= " << minVal << ": ";
         setColor(COLOR_DEFAULT);
+        cin >> value;
     }
-
     return value;
 }
 
@@ -106,32 +99,24 @@ int getValidInt(const string& prompt, int minVal)
 // NEW Week 05: getValidDouble
 // Purpose: Prompt for a double and loop until value is in range.
 // ============================================================
-//PA6 Fixed excess buffer issue
-double getValidDouble(const string& prompt,
-    double minVal,
-    double maxVal)
+double getValidDouble(const string& prompt, double minVal, double maxVal)
 {
     double value;
-
     cout << prompt;
-
-    while (!(cin >> value) ||
-        value < minVal ||
-        value > maxVal ||
-        cin.peek() != '\n')
+    cin >> value;
+    while (cin.fail() || value < minVal || value > maxVal)
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
         setColor(COLOR_BAD);
         cout << "  [!] Invalid input. Enter a value between "
-            << minVal << " and "
-            << maxVal << ": ";
+            << minVal << " and " << maxVal << ": ";
         setColor(COLOR_DEFAULT);
+        cin >> value;
     }
-
     return value;
 }
+
 // ============================================================
 // NEW Week 05: getValidString
 // Purpose: Read a full line (with spaces) and ensure it's not empty.

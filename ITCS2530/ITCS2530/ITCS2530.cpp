@@ -15,13 +15,12 @@
 #include <limits>
 #define NOMINMAX
 #include <windows.h>
-using namespace std;using namespace std;
 
 //PA6 fixed using namespace std twice error
 using namespace std;
 
 // ============================================================
-// NEW Week 05: Console color constants
+// Week 05: Console color constants
 // ============================================================
 const int COLOR_DEFAULT = 7;   // White (standard)
 const int COLOR_HEADER = 11;  // Cyan  (banners and section headers)
@@ -31,7 +30,23 @@ const int COLOR_BAD = 12;  // Red    (negative impact / error messages)
 const int COLOR_NEUTRAL = 13;  // Magenta (neutral impact)
 
 // ============================================================
-// NEW Week 05: setColor
+// New PA7 Mach - refactoring storage arrays to a struct
+// ============================================================
+struct SessionStorage
+{
+    string storedName;
+    int    storedGames;
+    double storedPts100;
+    double storedMinutes;
+    double storedTS;
+    double storedOnOff;
+    string storedRole;
+    string storedImpact;
+    string storedExperience;
+};
+
+// ============================================================
+// Week 05: setColor
 // Purpose: Change the console text color.
 // ============================================================
 void setColor(int color)
@@ -40,7 +55,7 @@ void setColor(int color)
 }
 
 // ============================================================
-// NEW Week 05: displayBanner
+// Week 05: displayBanner
 // Purpose: Print the welcome banner (moved out of main).
 // ============================================================
 void displayBanner()
@@ -58,7 +73,7 @@ void displayBanner()
 }
 
 // ============================================================
-// NEW Week 05: displayMenu
+// Week 05: displayMenu
 // Purpose: Print the main menu options (moved out of main).
 // ============================================================
 void displayMenu()
@@ -75,50 +90,65 @@ void displayMenu()
 }
 
 // ============================================================
-// NEW Week 05: getValidInt
+// Week 05: getValidInt
 // Purpose: Prompt for an int and loop until valid input >= min.
 // ============================================================
+//NEW PA7 Mach - Fixed buffer issue again.
 int getValidInt(const string& prompt, int minVal)
 {
     int value;
+
     cout << prompt;
     cin >> value;
-    while (cin.fail() || value < minVal)
+
+    while (cin.fail() || value < minVal || cin.peek() != '\n')
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         setColor(COLOR_BAD);
-        cout << "  [!] Invalid input. Enter a value >= " << minVal << ": ";
+        cout << "  [!] Invalid input. Enter a value >= "
+            << minVal << ": ";
         setColor(COLOR_DEFAULT);
+
         cin >> value;
     }
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return value;
 }
 
 // ============================================================
-// NEW Week 05: getValidDouble
+// Week 05: getValidDouble
 // Purpose: Prompt for a double and loop until value is in range.
 // ============================================================
+//NEW PA7 Mach - Fixed buffer issue
 double getValidDouble(const string& prompt, double minVal, double maxVal)
 {
     double value;
+
     cout << prompt;
     cin >> value;
-    while (cin.fail() || value < minVal || value > maxVal)
+
+    while (cin.fail() || value < minVal || value > maxVal || cin.peek() != '\n')
     {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         setColor(COLOR_BAD);
         cout << "  [!] Invalid input. Enter a value between "
             << minVal << " and " << maxVal << ": ";
         setColor(COLOR_DEFAULT);
+
         cin >> value;
     }
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return value;
 }
 
 // ============================================================
-// NEW Week 05: getValidString
+// Week 05: getValidString
 // Purpose: Read a full line (with spaces) and ensure it's not empty.
 // ============================================================
 string getValidString(const string& prompt)
@@ -137,7 +167,7 @@ string getValidString(const string& prompt)
 }
 
 // ============================================================
-// NEW Week 05: computeStats (struct-free version using references)
+// Week 05: computeStats
 // Purpose: Calculate derived stats from raw inputs.
 //          Uses output parameters (passed by reference) so we
 //          stay within Chapter 1-6 concepts (no structs/classes).
@@ -155,16 +185,15 @@ void computeStats(int gamesPlayed, double minutesPlayed,
 }
 
 // ============================================================
-// NEW Week 05: displayReport
+// Week 05: displayReport
 // Purpose: Print the single-session analytics report to console.
 // ============================================================
-void displayReport(const string& playerName, int gamesPlayed,
-    double minutesPlayed, double avgMinutesPerGame,
-    double pointsPer100, double trueShootingPct,
-    double onCourtRating, double offCourtRating,
-    double onOffDifferential, double scoringContribution,
-    const string& roleLabel, const string& impactLabel,
-    const string& experienceLabel)
+//NEW PA7 Mach - Refactored for struct
+void displayReport(const SessionStorage& session,
+    double avgMinutesPerGame,
+    double onCourtRating,
+    double offCourtRating,
+    double scoringContribution)
 {
     setColor(COLOR_HEADER);
     cout << "================================================" << endl;
@@ -174,22 +203,22 @@ void displayReport(const string& playerName, int gamesPlayed,
 
     cout << fixed << setprecision(1) << left;
     setColor(COLOR_LABEL);  cout << setw(32) << "Player Name:";
-    setColor(COLOR_DEFAULT); cout << playerName << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedName << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Games Played:";
-    setColor(COLOR_DEFAULT); cout << gamesPlayed << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedGames << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Minutes Played:";
-    setColor(COLOR_DEFAULT); cout << minutesPlayed << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedMinutes << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Avg Minutes Per Game:";
     setColor(COLOR_DEFAULT); cout << avgMinutesPerGame << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Points Per 100 Possessions:";
-    setColor(COLOR_DEFAULT); cout << pointsPer100 << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedPts100 << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "True Shooting %:";
-    setColor(COLOR_DEFAULT); cout << trueShootingPct << "%" << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedTS << "%" << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "On-Court Rating:";
     setColor(COLOR_DEFAULT); cout << onCourtRating << endl;
@@ -198,7 +227,7 @@ void displayReport(const string& playerName, int gamesPlayed,
     setColor(COLOR_DEFAULT); cout << offCourtRating << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "On/Off Differential:";
-    setColor(COLOR_DEFAULT); cout << onOffDifferential << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedOnOff << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Scoring Contribution Index:";
     setColor(COLOR_DEFAULT); cout << scoringContribution << endl;
@@ -207,13 +236,13 @@ void displayReport(const string& playerName, int gamesPlayed,
     setColor(COLOR_HEADER);
     cout << "------------------------------------------------" << endl;
     setColor(COLOR_LABEL);  cout << setw(32) << "Player Role:";
-    setColor(COLOR_DEFAULT); cout << roleLabel << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedRole << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Impact Classification:";
-    setColor(COLOR_DEFAULT); cout << impactLabel << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedImpact << endl;
 
     setColor(COLOR_LABEL);  cout << setw(32) << "Experience Level:";
-    setColor(COLOR_DEFAULT); cout << experienceLabel << endl;
+    setColor(COLOR_DEFAULT); cout << session.storedExperience << endl;
 
     setColor(COLOR_HEADER);
     cout << "------------------------------------------------" << endl;
@@ -221,20 +250,24 @@ void displayReport(const string& playerName, int gamesPlayed,
     cout << endl;
 
     // Impact sentence with color
-    if (onOffDifferential > 0)
+    // NEW PA7 Mach - Refactored for struct
+    if (session.storedOnOff > 0)
     {
         setColor(COLOR_GOOD);
-        cout << playerName << " has a POSITIVE impact: the team performs better with them on court." << endl;
+        cout << session.storedName
+            << " has a POSITIVE impact: the team performs better with them on court." << endl;
     }
-    else if (onOffDifferential < 0)
+    else if (session.storedOnOff < 0)
     {
         setColor(COLOR_BAD);
-        cout << playerName << " has a NEGATIVE impact: the team performs better when they sit." << endl;
+        cout << session.storedName
+            << " has a NEGATIVE impact: the team performs better when they sit." << endl;
     }
     else
     {
         setColor(COLOR_NEUTRAL);
-        cout << playerName << " has a NEUTRAL impact on overall team performance." << endl;
+        cout << session.storedName
+            << " has a NEUTRAL impact on overall team performance." << endl;
     }
 
     setColor(COLOR_DEFAULT);
@@ -246,13 +279,12 @@ void displayReport(const string& playerName, int gamesPlayed,
 }
 
 // ============================================================
-// NEW Week 05: saveReport
+// Week 05: saveReport
 // Purpose: Write all stored sessions to report.txt.
 // ============================================================
-//Pa6 Mach Arrays as parameters.
-void saveReport(const string storedName[], const int storedGames[],
-    const double storedPts100[], const double storedTS[],
-    const double storedOnOff[], const string storedRole[],
+
+//NEW PA7 Mach - Refactoring for struct
+void saveReport(const SessionStorage sessions[],
     int sessionCount)
 {
     ofstream reportFile("report.txt");
@@ -271,15 +303,16 @@ void saveReport(const string storedName[], const int storedGames[],
         << endl;
     reportFile << string(80, '-') << endl;
 
+    //NEW PA7 Mach - refactored for struct
     for (int i = 0; i < sessionCount; i++)
     {
         reportFile << fixed << setprecision(1) << left
-            << setw(20) << storedName[i]
-            << setw(8) << storedGames[i]
-            << setw(12) << storedPts100[i]
-            << setw(8) << storedTS[i]
-            << setw(10) << storedOnOff[i]
-            << setw(22) << storedRole[i]
+            << setw(20) << sessions[i].storedName
+            << setw(8) << sessions[i].storedGames
+            << setw(12) << sessions[i].storedPts100
+            << setw(8) << sessions[i].storedTS
+            << setw(10) << sessions[i].storedOnOff
+            << setw(22) << sessions[i].storedRole
             << endl;
     }
 
@@ -301,18 +334,9 @@ int main()
     const int    MAX_SESSIONS = 5;
     const int    MENU_EXIT = 4;
 
-    // Session storage arrays (carried from Week 04)
     //PA6 Mach - All Arrays recieve mulitipule input however stored minutes is not used yet.
-    //I may need to ask Jacob what he intended to do with this.
-    string storedName[MAX_SESSIONS];
-    int    storedGames[MAX_SESSIONS];
-    double storedPts100[MAX_SESSIONS];
-    double storedMinutes[MAX_SESSIONS];
-    double storedTS[MAX_SESSIONS];
-    double storedOnOff[MAX_SESSIONS];
-    string storedRole[MAX_SESSIONS];
-    string storedImpact[MAX_SESSIONS];
-    string storedExperience[MAX_SESSIONS];
+    //NEW PA7 replaced arrays with new struct
+    SessionStorage sessions[MAX_SESSIONS];
     int    sessionCount = 0;
 
     // Variables
@@ -325,26 +349,31 @@ int main()
     double onCourtRating;
     double offCourtRating;
 
-    // NEW Week 05: call displayBanner function instead of inline code
+    // Week 05: call displayBanner function instead of inline code
     displayBanner();
 
     // LOOP 1: do-while — Main menu loop (carried from Week 04)
     do
     {
-        // NEW Week 05: call displayMenu function instead of inline code
+        // Week 05: call displayMenu function instead of inline code
         displayMenu();
         cin >> menuChoice;
 
         // LOOP 2: while — Menu input validation (carried from Week 04)
-        while (cin.fail() || menuChoice < 1 || menuChoice > 4)
+        //NEW PA7 Mach - Fixed buffer issue.
+        while (cin.fail() || menuChoice < 1 || menuChoice > 4 || cin.peek() != '\n')
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
             setColor(COLOR_BAD);
             cout << "  [!] Invalid choice. Please enter 1-4: ";
             setColor(COLOR_DEFAULT);
+
             cin >> menuChoice;
         }
+
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
         cout << endl;
 
@@ -370,9 +399,7 @@ int main()
                 break;
             }
 
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-            // NEW Week 05: use input functions instead of inline validation loops
+            // Week 05: use input functions instead of inline validation loops
             playerName = getValidString("Enter the player's name: ");
             gamesPlayed = getValidInt("Enter the number of games played this season: ", 1);
             pointsPer100 = getValidDouble("Enter their points per 100 possessions: ", 0.0, 200.0);
@@ -381,7 +408,7 @@ int main()
             onCourtRating = getValidDouble("Enter the team's on-court rating with this player: ", -50.0, 200.0);
             offCourtRating = getValidDouble("Enter the team's off-court rating without this player: ", -50.0, 200.0);
 
-            // NEW Week 05: derived stats via computeStats function
+            // Week 05: derived stats via computeStats function
             {
                 double onOffDifferential, avgMinutesPerGame, scoringContribution;
                 computeStats(gamesPlayed, minutesPlayed, pointsPer100,
@@ -420,7 +447,7 @@ int main()
                     STILL_BUILDING_EXPERIENCE
                 };
 
-                //PA65 Mach String replacement
+                //PA6 Mach String replacement
                 ExperienceLevel experienceLabel;
                 //PA6 Mach since I wrote the enum prior to functions being added the enum screwed up passed
                 //values using this to fix it.
@@ -442,23 +469,26 @@ int main()
                 else
                     experienceText = "Still Building Experience";
 
-                // NEW Week 05: call displayReport function instead of inline output
-                displayReport(playerName, gamesPlayed, minutesPlayed,
-                    avgMinutesPerGame, pointsPer100, trueShootingPct,
-                    onCourtRating, offCourtRating,
-                    onOffDifferential, scoringContribution,
-                    roleLabel, impactLabel, experienceText);
-
                 // Store session (carried from Week 04)
-                storedName[sessionCount] = playerName;
-                storedGames[sessionCount] = gamesPlayed;
-                storedPts100[sessionCount] = pointsPer100;
-                storedMinutes[sessionCount] = minutesPlayed;
-                storedTS[sessionCount] = trueShootingPct;
-                storedOnOff[sessionCount] = onOffDifferential;
-                storedRole[sessionCount] = roleLabel;
-                storedImpact[sessionCount] = impactLabel;
-                storedExperience[sessionCount] = experienceText;
+                //NEW PA7 Mach - Refactored for struct
+                sessions[sessionCount].storedName = playerName;
+                sessions[sessionCount].storedGames = gamesPlayed;
+                sessions[sessionCount].storedPts100 = pointsPer100;
+                sessions[sessionCount].storedMinutes = minutesPlayed;
+                sessions[sessionCount].storedTS = trueShootingPct;
+                sessions[sessionCount].storedOnOff = onOffDifferential;
+                sessions[sessionCount].storedRole = roleLabel;
+                sessions[sessionCount].storedImpact = impactLabel;
+                sessions[sessionCount].storedExperience = experienceText;
+
+                // Week 05: call displayReport function instead of inline output
+                //NEW PA7 Mach - Refactored for struct
+                displayReport(sessions[sessionCount],
+                    avgMinutesPerGame,
+                    onCourtRating,
+                    offCourtRating,
+                    scoringContribution);
+
                 sessionCount++;
 
                 setColor(COLOR_GOOD);
@@ -505,25 +535,25 @@ int main()
             setColor(COLOR_DEFAULT);
             cout << string(80, '-') << endl;
 
-            //PA6 Mach use of arrays in summary report
+            //NEW PA7 Mach - Refactored for struct
             for (int i = 0; i < sessionCount; i++)
             {
                 cout << fixed << setprecision(1) << left
-                    << setw(20) << storedName[i]
-                    << setw(8) << storedGames[i]
-                    << setw(12) << storedPts100[i]
-                    << setw(8) << storedTS[i]
-                    << setw(10) << storedOnOff[i]
-                    << setw(22) << storedRole[i]
+                    << setw(20) << sessions[i].storedName
+                    << setw(8) << sessions[i].storedGames
+                    << setw(12) << sessions[i].storedPts100
+                    << setw(8) << sessions[i].storedTS
+                    << setw(10) << sessions[i].storedOnOff
+                    << setw(22) << sessions[i].storedRole
                     << endl;
             }
 
             cout << string(80, '-') << endl;
             cout << endl;
 
-            //NEW Week 05: call saveReport function instead of inline file writing
-            saveReport(storedName, storedGames, storedPts100, storedTS,
-                storedOnOff, storedRole, sessionCount);
+            //Week 05: call saveReport function instead of inline file writing
+            //NEW PA7 updated call for struct
+            saveReport(sessions, sessionCount);
 
             setColor(COLOR_GOOD);
             cout << "  Report saved to report.txt" << endl;
@@ -556,17 +586,18 @@ int main()
             cout << "=================================================" << endl;
             setColor(COLOR_DEFAULT);
 
+            //NEW PA7 Mach - Refactored for struct
             for (int i = 0; i < sessionCount; i++)
             {
                 cout << endl;
                 setColor(COLOR_LABEL);  cout << "Player:     ";
-                setColor(COLOR_DEFAULT); cout << storedName[i] << endl;
+                setColor(COLOR_DEFAULT); cout << sessions[i].storedName << endl;
                 setColor(COLOR_LABEL);  cout << "Role:       ";
-                setColor(COLOR_DEFAULT); cout << storedRole[i] << endl;
+                setColor(COLOR_DEFAULT); cout << sessions[i].storedRole << endl;
                 setColor(COLOR_LABEL);  cout << "Impact:     ";
-                setColor(COLOR_DEFAULT); cout << storedImpact[i] << endl;
+                setColor(COLOR_DEFAULT); cout << sessions[i].storedImpact << endl;
                 setColor(COLOR_LABEL);  cout << "Experience: ";
-                setColor(COLOR_DEFAULT); cout << storedExperience[i] << endl;
+                setColor(COLOR_DEFAULT); cout << sessions[i].storedExperience << endl;
                 cout << "------------------------------------------------" << endl;
             }
 
